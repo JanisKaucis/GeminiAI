@@ -50,7 +50,6 @@ function submitForm() {
                     <div class="flex flex-col">
                         <input class="rounded-lg bg-gray-200 p-2 text-black" v-model="question" />
                         <p v-if="errors.question" class="text-sm text-red-600">{{ errors.question[0] }}</p>
-                        <p v-if="errors.answer" class="text-sm text-red-600">{{ errors.answer }}</p>
                         <div class="flex justify-center">
                             <Button class="m-4 bg-blue-300 focus:bg-blue-400 flex content-center w-30 h-10" type="submit">
                                 <span v-if="loading"  class="w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin"></span

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 class GeminiService
 {
-    public function getAnswerFromGeminiAPI($question)
+    public function getAnswerFromGeminiAPI($question): false|string
     {
         try {
             $result = Gemini::generativeModel(model: 'gemini-2.0-flash')->generateContent($question);

@@ -31,7 +31,9 @@ class GeminiController extends Controller
         if (!$answer) {
             return response()->json([
                 'errors' => [
-                    'answer' => 'Something went wrong!'
+                    'question' => [
+                        'Something went wrong!'
+                    ]
                 ],
             ], 400);
         }
