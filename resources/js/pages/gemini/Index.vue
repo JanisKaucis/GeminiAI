@@ -34,8 +34,8 @@ function submitForm() {
     <div class="bg-black">
         <div class="flex h-screen w-1/2 flex-col justify-self-center bg-gray-400 p-4">
             <div class="flex-1 overflow-hidden rounded bg-gray-100 shadow mb-2" v-if="answer">
-                <pre class="h-full overflow-x-hidden overflow-y-auto p-4 break-words whitespace-pre-wrap text-black">
-                    {{ answer }}</pre>
+                <pre class="h-full overflow-x-hidden overflow-y-auto p-4 break-words whitespace-pre-wrap
+                text-black">{{ answer }}</pre>
             </div>
             <div class="mt-auto w-full rounded-lg bg-white p-6">
                 <form @submit.prevent="submitForm">
