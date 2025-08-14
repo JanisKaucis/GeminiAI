@@ -19,7 +19,7 @@ function submitForm() {
             if (response.status !== 200) {
                 errors.value = data.errors;
                 loading.value = false;
-                return;
+                console.log(errors)
             }
 
             answer.value = data.answer;
@@ -27,9 +27,11 @@ function submitForm() {
             loading.value = false;
         })
         .catch((error) => {
-            if (error.response?.status === 422) {
+            if (error.response?.status !== 200) {
+                console.log(error.response.data.errors)
                 errors.value = error.response.data.errors;
                 loading.value = false;
+                question.value = '';
             }
         });
 }
@@ -48,6 +50,7 @@ function submitForm() {
                     <div class="flex flex-col">
                         <input class="rounded-lg bg-gray-200 p-2 text-black" v-model="question" />
                         <p v-if="errors.question" class="text-sm text-red-600">{{ errors.question[0] }}</p>
+                        <p v-if="errors.answer" class="text-sm text-red-600">{{ errors.answer }}</p>
                         <div class="flex justify-center">
                             <Button class="m-4 bg-blue-300 focus:bg-blue-400 flex content-center w-30 h-10" type="submit">
                                 <span v-if="loading"  class="w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin"></span

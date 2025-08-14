@@ -15,7 +15,7 @@ class GeminiService
         }catch (\Exception $e){
              Log::error($e->getMessage());
 
-            return 'Something went wrong';
+            return false;
         }
     }
 }

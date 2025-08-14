@@ -28,6 +28,13 @@ class GeminiController extends Controller
 
         $answer = $this->service->getAnswerFromGeminiAPI($question);
 
+        if (!$answer) {
+            return response()->json([
+                'errors' => [
+                    'answer' => 'Something went wrong!'
+                ],
+            ], 400);
+        }
         return response()->json([
             'answer' => $answer,
         ]);
