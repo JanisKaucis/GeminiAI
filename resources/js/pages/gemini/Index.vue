@@ -38,7 +38,7 @@ function submitForm() {
             <p v-if="errors.question" class="text-sm text-red-600">{{ errors.question[0] }}</p>
             <Button type="submit">Ask Gemini</Button>
             <div v-if="answer">
-                <p>{{ answer }}</p>
+                <pre>{{ answer }}</pre>
             </div>
         </form>
     </div>
