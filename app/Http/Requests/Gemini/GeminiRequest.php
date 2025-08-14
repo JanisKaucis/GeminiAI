@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Gemini;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class GeminiRequest extends FormRequest
 {
@@ -24,5 +26,14 @@ class GeminiRequest extends FormRequest
         return [
             'question' => 'required|string',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'error' => $validator->errors(),
+            ], 422)
+        );
     }
 }

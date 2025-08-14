@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Gemini\Laravel\Facades\Gemini;
@@ -6,16 +7,27 @@ use Illuminate\Support\Facades\Log;
 
 class GeminiService
 {
-    public function getAnswerFromGeminiAPI($question): false|string
+    public function getAnswerFromGeminiAPI($question)
     {
         try {
             $result = Gemini::generativeModel(model: 'gemini-2.0-flash')->generateContent($question);
 
             return $result->text();
-        }catch (\Exception $e){
-             Log::error($e->getMessage());
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
 
-            return false;
+            return 'Something went wrong';
+        }
+    }
+
+    public function streamAnswerFromGeminiAPI($question): void
+    {
+        $result = Gemini::generativeModel(model: 'gemini-2.0-flash')->streamGenerateContent($question);
+
+        foreach ($result as $chunk) {
+            echo $chunk->text();
+            ob_flush();
+            flush();
         }
     }
 }

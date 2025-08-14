@@ -21,24 +21,27 @@ class GeminiController extends Controller
         return inertia('gemini/Index');
     }
 
-    public function postQuestion(GeminiRequest $request): \Illuminate\Http\JsonResponse
+    public function getQuestion(GeminiRequest $request)
     {
         $validated = $request->validated();
         $question = $validated['question'];
-
-        $answer = $this->service->getAnswerFromGeminiAPI($question);
-
-        if (!$answer) {
+        try {
+            $result = $this->service->streamAnswerFromGeminiAPI($question);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'errors' => [
-                    'question' => [
-                        'Something went wrong!'
-                    ]
-                ],
-            ], 400);
+                'error' => [
+                    'failed' => 'Something went wrong!'
+                    ],
+            ], 500);
         }
-        return response()->json([
-            'answer' => $answer,
+        return response()->stream(function () use ($result) {
+            echo $result;
+        }, 200, [
+            'Content-Type' => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+            'Connection' => 'keep-alive',
         ]);
+
     }
 }
