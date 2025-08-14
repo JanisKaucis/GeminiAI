@@ -28,7 +28,6 @@ function submitForm() {
         })
         .catch((error) => {
             if (error.response?.status !== 200) {
-                console.log(error.response.data.errors)
                 errors.value = error.response.data.errors;
                 loading.value = false;
                 question.value = '';
@@ -51,7 +50,7 @@ function submitForm() {
                         <input class="rounded-lg bg-gray-200 p-2 text-black" v-model="question" />
                         <p v-if="errors.question" class="text-sm text-red-600">{{ errors.question[0] }}</p>
                         <div class="flex justify-center">
-                            <Button class="m-4 bg-blue-300 hover:bg-blue-400 flex content-center w-30 h-10" type="submit">
+                            <Button class="m-4 bg-blue-300 hover:bg-blue-400 flex content-center w-30 h-10" type="submit"  :disabled="loading">
                                 <span v-if="loading"  class="w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin"></span
                                 ><span v-if="!loading">Ask Gemini</span>
                             </Button>
