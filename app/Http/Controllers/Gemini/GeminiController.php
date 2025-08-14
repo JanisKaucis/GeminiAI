@@ -3,12 +3,33 @@
 namespace App\Http\Controllers\Gemini;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Gemini\GeminiRequest;
+use App\Services\GeminiService;
+use Illuminate\Support\Facades\Log;
 
 class GeminiController extends Controller
 {
-    public function index()
+    private GeminiService $service;
+
+    public function __construct(GeminiService $service)
     {
-        return inertia('gemini.Index');
+        $this->service = $service;
+    }
+
+    public function index(): \Inertia\Response|\Inertia\ResponseFactory
+    {
+        return inertia('gemini/Index');
+    }
+
+    public function postQuestion(GeminiRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $validated = $request->validated();
+        $question = $validated['question'];
+
+        $answer = $this->service->getAnswerFromGeminiAPI($question);
+
+        return response()->json([
+            'answer' => $answer,
+        ]);
     }
 }
