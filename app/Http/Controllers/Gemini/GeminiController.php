@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Gemini;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Gemini\GeminiRequest;
+use App\Models\conversation;
 use App\Services\GeminiService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class GeminiController extends Controller
@@ -25,17 +27,17 @@ class GeminiController extends Controller
     {
         $validated = $request->validated();
         $question = $validated['question'];
-        $answer = $this->service->getAnswerFromGeminiAPI($question);
-
-        if (!$answer) {
+        $windowId = $validated['window_id'];
+        try {
+            $answer = $this->service->sendMessage($question, $windowId);
+        } catch (\Exception $e) {
             return response()->json([
                 'errors' => [
-                    'question' => [
-                        'Something went wrong!'
-                    ]
+                    'failed' => 'Something went wrong!'
                 ],
-            ], 400);
+            ], 500);
         }
+
         return response()->json([
             'answer' => $answer,
         ]);

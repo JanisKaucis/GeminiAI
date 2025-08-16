@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gemini_messages', function (Blueprint $table) {
+        Schema::create('conversations', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->string('role');
-            $table->longText('content');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('window_id');
+            $table->string('title')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gemini_messages');
+        Schema::dropIfExists('conversations');
     }
 };

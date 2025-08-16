@@ -25,6 +25,7 @@ class GeminiRequest extends FormRequest
     {
         return [
             'question' => 'required|string',
+            'window_id' => 'required|string|uuid',
         ];
     }
 
@@ -32,7 +33,7 @@ class GeminiRequest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-                'error' => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422)
         );
     }
