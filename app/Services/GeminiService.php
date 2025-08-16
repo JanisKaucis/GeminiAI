@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\GeminiMessage;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
 use Illuminate\Support\Facades\Log;
@@ -11,12 +12,19 @@ class GeminiService
     public function getAnswerFromGeminiAPI($question)
     {
         try {
+            $userId = auth()->id();
+            $history = GeminiMessage::where('user_id', $userId)
+                ->latest()->take(20)
+                ->get(['role', 'content'])->toArray();
+
             $chat = Gemini::chat(model: 'gemini-2.0-flash')
-                ->startChat();
+                ->startChat($history);
             $result = $chat->sendMessage($question);
+            $response = $result->text();
+            Log::debug($response);
+            GeminiMessage::create(['user_id' => $userId, 'content' => $response, 'role' => 'user']);
 
-
-                echo $result->text();
+            return $response;
 
         } catch (\Exception $e) {
             Log::error($e->getMessage());

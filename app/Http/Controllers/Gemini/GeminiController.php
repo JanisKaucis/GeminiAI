@@ -25,23 +25,19 @@ class GeminiController extends Controller
     {
         $validated = $request->validated();
         $question = $validated['question'];
-        try {
-            $result = $this->service->getAnswerFromGeminiAPI($question);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                'error' => [
-                    'failed' => 'Something went wrong!'
-                    ],
-            ], 500);
-        }
-        return response()->stream(function () use ($result) {
-            echo $result;
-        }, 200, [
-            'Content-Type' => 'text/event-stream',
-            'Cache-Control' => 'no-cache',
-            'Connection' => 'keep-alive',
-        ]);
+        $answer = $this->service->getAnswerFromGeminiAPI($question);
 
+        if (!$answer) {
+            return response()->json([
+                'errors' => [
+                    'question' => [
+                        'Something went wrong!'
+                    ]
+                ],
+            ], 400);
+        }
+        return response()->json([
+            'answer' => $answer,
+        ]);
     }
 }
