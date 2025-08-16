@@ -26,7 +26,7 @@ class GeminiController extends Controller
         $validated = $request->validated();
         $question = $validated['question'];
         try {
-            $result = $this->service->streamAnswerFromGeminiAPI($question);
+            $result = $this->service->getAnswerFromGeminiAPI($question);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json([
