@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class GeminiService
 {
-    public function sendMessage($question, $windowId)
+    public function sendMessage($question, $windowId): string
     {
         $conversation = Conversation::firstOrCreate([
             'user_id' => auth()->id(),
@@ -23,7 +23,7 @@ class GeminiService
         return $this->continueConversation($conversation, $question);
     }
 
-    public function continueConversation(Conversation $conversation, string $userMessage)
+    public function continueConversation(Conversation $conversation, string $userMessage): string
     {
         $conversation->messages()->create([
             'role' => 'user',
@@ -46,7 +46,7 @@ class GeminiService
             ->values()
             ->all();
 
-        $chat = Gemini::chat(model: 'gemini-2.0-flashs')
+        $chat = Gemini::chat(model: 'gemini-2.0-flash')
             ->startChat($history);
         $response = $chat->sendMessage($userMessage);
 

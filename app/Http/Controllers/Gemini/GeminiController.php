@@ -23,7 +23,7 @@ class GeminiController extends Controller
         return inertia('gemini/Index');
     }
 
-    public function getQuestion(GeminiRequest $request)
+    public function getQuestion(GeminiRequest $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validated();
         $question = $validated['question'];
@@ -40,6 +40,21 @@ class GeminiController extends Controller
 
         return response()->json([
             'answer' => $answer,
+        ]);
+    }
+
+    public function getChatWindowHistory(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $windowId = $request->get('window_id');
+
+        $conversation = Conversation::with('messages')
+            ->where(['user_id' => auth()->id(), 'window_id' => $windowId])
+            ->first();
+
+        $messages = $conversation ? $conversation->messages()->get(['role', 'message'])->toArray() : [];
+
+        return response()->json([
+            'messages' => $messages,
         ]);
     }
 }

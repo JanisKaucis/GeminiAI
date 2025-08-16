@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import axios from 'axios';
 
 const question = ref('');
@@ -24,7 +24,6 @@ function askGemini() {
             if (response.status !== 200) {
                 errors.value = data.errors;
                 loading.value = false;
-                console.log(errors);
             }
             answer.value += '<div class="inline-block p-2 m-2 ml-0 bg-gray-400 rounded-md">' + question.value + '</div>\n';
             answer.value += data.answer + '\n';
@@ -36,10 +35,34 @@ function askGemini() {
                 errors.value = error.response.data.errors;
                 loading.value = false;
                 question.value = '';
-                console.log(error.response.data);
             }
         });
 }
+
+function getThisSessionChatMessages() {
+    if (!sessionStorage.getItem("window_id")) {
+        return;
+    }
+    const windowId = sessionStorage.getItem("window_id");
+
+    axios.get(route('chat-window-history', {window_id: windowId}))
+        .then((response) => {
+            const messages = response.data.messages;
+            console.log(response.data.messages)
+            for (let i = 0; i< messages.length; i++) {
+                if (messages[i].role === 'user') {
+                    answer.value += '<div class="inline-block p-2 m-2 ml-0 bg-gray-400 rounded-md">' + messages[i].message + '</div>\n';
+                }
+                if (messages[i].role === 'model') {
+                    answer.value += messages[i].message + '\n';
+                }
+            }
+        })
+}
+
+onMounted(() => {
+    getThisSessionChatMessages();
+})
 </script>
 
 <template>
