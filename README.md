@@ -16,13 +16,15 @@ This project is a **Laravel 12 + Vue 3** application running with MySQL.
 
 git clone https://github.com/JanisKaucis/GeminiAI.git
 
-cd geminiai
+Open project.
+
+composer install
 
 copy .env.example .env
 
 php artisan key:generate
 
-composer install
+Setup database in .env
 
 php artisan migrate
 
