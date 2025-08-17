@@ -91,7 +91,7 @@ onMounted(() => {
 
 <template>
     <div class="grid grid-cols-4 bg-black">
-        <div class="col-span-4 flex h-full rounded border bg-gray-200 p-4 text-black lg:col-span-1 lg:mx-4 lg:w-1/2 lg:justify-self-end">
+        <div class="col-span-4 flex h-full rounded border bg-gray-200 p-4 text-black lg:col-span-1 lg:mx-4">
             <div class="w-full">
                 <button class="rounded border border-gray-500 bg-gray-300 p-1 hover:cursor-pointer" @click="startNewConversation()">
                     + New chat
@@ -101,7 +101,7 @@ onMounted(() => {
                     <div class="my-1">
                         <button
                             :title="conversation.title"
-                            class="w-40 truncate text-left hover:cursor-pointer hover:rounded hover:bg-gray-300"
+                            class="w-80 lg:w-40 truncate text-left hover:cursor-pointer hover:rounded hover:bg-gray-300"
                             :class="{
                                 'rounded border border-gray-500 bg-gray-300': selectedWindowId === conversation.window_id,
                             }"
