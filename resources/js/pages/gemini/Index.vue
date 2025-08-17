@@ -102,7 +102,7 @@ onMounted(() => {
                 <button class="rounded border border-gray-500 bg-gray-300 p-1 hover:cursor-pointer" @click="startNewConversation()">
                     + New chat
                 </button>
-                <div class="mb-2 border-b-2 pb-2">Chats</div>
+                <div class="text-lg font-bold my-4 border-b-2 pb-2">Chats</div>
                 <div v-for="conversation in conversationsHistory" :key="conversation.id">
                     <div class="my-1">
                         <button
