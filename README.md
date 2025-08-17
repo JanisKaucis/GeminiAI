@@ -24,6 +24,8 @@ copy .env.example .env
 
 php artisan key:generate
 
+Setup database in .env
+
 php artisan migrate
 
 npm install
