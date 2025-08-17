@@ -7,6 +7,7 @@ use Gemini\Data\Content;
 use Gemini\Data\Part;
 use Gemini\Enums\Role;
 use Gemini\Laravel\Facades\Gemini;
+use Illuminate\Support\Facades\Log;
 
 class GeminiService
 {
@@ -30,8 +31,10 @@ class GeminiService
         ]);
 
         $history = $conversation->messages()
-            ->orderBy('created_at')
-            ->get(['role', 'message'])
+            ->latest()
+            ->take(101)
+            ->get(['role', 'message', 'created_at'])
+            ->sortBy('created_at')
             ->map(function ($m) {
                 $role = strtolower($m->role) === 'model'
                     ? Role::MODEL
@@ -44,7 +47,7 @@ class GeminiService
             })
             ->values()
             ->all();
-
+        Log::debug($history);
         $chat = Gemini::chat(model: 'gemini-2.0-flash')
             ->startChat($history);
         $response = $chat->sendMessage($userMessage);

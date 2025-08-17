@@ -7,6 +7,7 @@ use App\Http\Requests\Gemini\GeminiRequest;
 use App\Models\conversation;
 use App\Services\GeminiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class GeminiController extends Controller
 {
@@ -20,7 +21,7 @@ class GeminiController extends Controller
     public function index(): \Inertia\Response|\Inertia\ResponseFactory
     {
         $conversations = $this->service->getConversations();
-        return inertia('gemini/Index',['conversations' => $conversations]);
+        return inertia('gemini/Index', ['conversations' => $conversations]);
     }
 
     public function getQuestion(GeminiRequest $request): \Illuminate\Http\JsonResponse
@@ -31,6 +32,7 @@ class GeminiController extends Controller
         try {
             $answer = $this->service->sendMessage($question, $windowId);
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
                 'errors' => [
                     'failed' => 'Something went wrong!'
@@ -51,7 +53,13 @@ class GeminiController extends Controller
             ->where(['user_id' => auth()->id(), 'window_id' => $windowId])
             ->first();
 
-        $messages = $conversation ? $conversation->messages()->get(['role', 'message'])->toArray() : [];
+        $messages = $conversation ? $conversation->messages()
+            ->latest()
+            ->take(100)
+            ->get()
+            ->sortBy('created_at')
+            ->values()
+            ->toArray() : [];
 
         return response()->json([
             'messages' => $messages,
