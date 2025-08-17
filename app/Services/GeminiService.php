@@ -7,7 +7,6 @@ use Gemini\Data\Content;
 use Gemini\Data\Part;
 use Gemini\Enums\Role;
 use Gemini\Laravel\Facades\Gemini;
-use Illuminate\Support\Facades\Log;
 
 class GeminiService
 {

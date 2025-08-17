@@ -7,7 +7,6 @@ use App\Http\Requests\Gemini\GeminiRequest;
 use App\Models\conversation;
 use App\Services\GeminiService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GeminiController extends Controller
 {
@@ -20,7 +19,8 @@ class GeminiController extends Controller
 
     public function index(): \Inertia\Response|\Inertia\ResponseFactory
     {
-        return inertia('gemini/Index');
+        $conversations = Conversation::where('user_id', auth()->id())->limit(10)->orderBy('created_at', 'desc')->get();
+        return inertia('gemini/Index',['conversations' => $conversations]);
     }
 
     public function getQuestion(GeminiRequest $request): \Illuminate\Http\JsonResponse
