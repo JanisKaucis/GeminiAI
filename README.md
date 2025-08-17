@@ -14,7 +14,7 @@ This project is a **Laravel 12 + Vue 3** application running with MySQL.
 
 ### 1. Clone the Repository
 
-git clone https://github.com/your-username/geminiai.git
+git clone https://github.com/JanisKaucis/GeminiAI.git
 
 cd geminiai
 
