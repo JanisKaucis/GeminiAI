@@ -56,4 +56,9 @@ class GeminiService
 
         return $response->text();
     }
+
+    public function getConversations()
+    {
+        return Conversation::where('user_id', auth()->id())->limit(10)->orderBy('created_at', 'desc')->get();
+    }
 }

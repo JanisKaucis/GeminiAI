@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { onMounted, ref } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import axios from 'axios';
-import { defineProps } from 'vue';
-
-const question = ref('');
-const errors = ref({});
-const answer = ref('');
-const loading = ref(false);
+import { LogOut } from 'lucide-vue-next';
+import { defineProps, onMounted, ref } from 'vue';
 
 const props = defineProps({
     conversations: Object,
 });
+const question = ref('');
+const errors = ref({});
+const answer = ref('');
+const loading = ref(false);
+const conversationsHistory = ref(props.conversations);
+const selectedWindowId = ref<string | null>(null);
 
 function askGemini() {
     loading.value = true;
@@ -19,6 +21,7 @@ function askGemini() {
 
     if (!sessionStorage.getItem('window_id')) {
         sessionStorage.setItem('window_id', crypto.randomUUID());
+        updateConversationsHistory();
     }
     const windowId = sessionStorage.getItem('window_id');
 
@@ -27,10 +30,6 @@ function askGemini() {
         .then((response) => {
             const data = response.data;
 
-            if (response.status !== 200) {
-                errors.value = data.errors;
-                loading.value = false;
-            }
             answer.value += '<div class="inline-block p-2 m-2 ml-0 bg-gray-400 rounded-md">' + question.value + '</div>\n';
             answer.value += data.answer + '\n';
             question.value = '';
@@ -56,6 +55,8 @@ function getThisSessionChatMessages() {
 
 function selectConversation(windowId: string | null) {
     answer.value = '';
+    selectedWindowId.value = windowId;
+    sessionStorage.setItem('window_id', windowId ?? crypto.randomUUID());
 
     axios.get(route('chat-window-history', { window_id: windowId })).then((response) => {
         const messages = response.data.messages;
@@ -71,6 +72,18 @@ function selectConversation(windowId: string | null) {
     });
 }
 
+function updateConversationsHistory() {
+    axios.get(route('conversations-history')).then((response) => {
+        conversationsHistory.value = response.data.conversations;
+    });
+}
+
+function startNewConversation() {
+    sessionStorage.removeItem('window_id');
+    selectedWindowId.value = null;
+    answer.value = '';
+}
+
 onMounted(() => {
     getThisSessionChatMessages();
 });
@@ -78,19 +91,30 @@ onMounted(() => {
 
 <template>
     <div class="grid grid-cols-4 bg-black">
-        <div class="col-span-4 md:col-span-1 flex md:justify-self-end h-full md:w-1/2 border rounded
-        p-4 md:mx-4 bg-gray-200 text-black">
+        <div class="col-span-4 flex h-full rounded border bg-gray-200 p-4 text-black lg:col-span-1 lg:mx-4 lg:w-1/2 lg:justify-self-end">
             <div class="w-full">
-                <div class="border-b-2 pb-2 mb-2">Chats</div>
-                <div v-for="conversation in props.conversations" :key="conversation">
+                <button class="rounded border border-gray-500 bg-gray-300 p-1 hover:cursor-pointer" @click="startNewConversation()">
+                    + New chat
+                </button>
+                <div class="mb-2 border-b-2 pb-2">Chats</div>
+                <div v-for="conversation in conversationsHistory" :key="conversation.id">
                     <div class="my-1">
-                        <button :title="conversation.title" class="truncate w-40 text-left hover:bg-gray-300 hover:rounded hover:cursor-pointer" type="button"
-                                @click="selectConversation(conversation.window_id)">{{ conversation.title }}</button>
+                        <button
+                            :title="conversation.title"
+                            class="w-40 truncate text-left hover:cursor-pointer hover:rounded hover:bg-gray-300"
+                            :class="{
+                                'rounded border border-gray-500 bg-gray-300': selectedWindowId === conversation.window_id,
+                            }"
+                            type="button"
+                            @click="selectConversation(conversation.window_id)"
+                        >
+                            {{ conversation.title }}
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-span-4 md:col-span-2 flex h-screen w-full flex-col justify-self-center bg-gray-400 p-4 rounded">
+        <div class="col-span-4 flex h-screen w-full flex-col justify-self-center rounded bg-gray-400 p-4 lg:col-span-2">
             <div class="mb-2 flex-1 overflow-x-hidden rounded bg-gray-100 shadow">
                 <div v-if="errors?.failed">
                     <div class="m-2 inline-block rounded-md bg-red-300 p-2 text-red-500">{{ errors.failed }}</div>
@@ -113,6 +137,12 @@ onMounted(() => {
                     </div>
                 </form>
             </div>
+        </div>
+        <div class="col-span-4 lg:col-span-1 flex flex-col items-center">
+            <Link class="flex hover:cursor-pointer" method="post" :href="route('logout')" as="button">
+                    <LogOut class="mr-2 h-6 w-6" />
+                    Log out
+            </Link>
         </div>
     </div>
 </template>

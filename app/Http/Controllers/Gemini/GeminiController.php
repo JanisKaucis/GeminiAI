@@ -19,7 +19,7 @@ class GeminiController extends Controller
 
     public function index(): \Inertia\Response|\Inertia\ResponseFactory
     {
-        $conversations = Conversation::where('user_id', auth()->id())->limit(10)->orderBy('created_at', 'desc')->get();
+        $conversations = $this->service->getConversations();
         return inertia('gemini/Index',['conversations' => $conversations]);
     }
 
@@ -55,6 +55,15 @@ class GeminiController extends Controller
 
         return response()->json([
             'messages' => $messages,
+        ]);
+    }
+
+    public function getConversationsHistory(): \Illuminate\Http\JsonResponse
+    {
+        $conversations = $this->service->getConversations();
+
+        return response()->json([
+            'conversations' => $conversations
         ]);
     }
 }
