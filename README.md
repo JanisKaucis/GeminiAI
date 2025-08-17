@@ -1,12 +1,11 @@
 Setup instructions:
 # 🚀 GeminiAI – Laravel + Vue + Docker
 
-This project is a **Laravel 12 + Vue 3** application running in **Docker** with MySQL.
+This project is a **Laravel 12 + Vue 3** application running with MySQL.
 
 ---
 
 ## 🛠 Requirements
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) (with **WSL2** enabled if on Windows)
 - Git
 
 ---
