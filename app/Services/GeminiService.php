@@ -7,7 +7,6 @@ use Gemini\Data\Content;
 use Gemini\Data\Part;
 use Gemini\Enums\Role;
 use Gemini\Laravel\Facades\Gemini;
-use Illuminate\Support\Facades\Log;
 
 class GeminiService
 {
@@ -47,7 +46,7 @@ class GeminiService
             })
             ->values()
             ->all();
-        Log::debug($history);
+
         $chat = Gemini::chat(model: 'gemini-2.0-flash')
             ->startChat($history);
         $response = $chat->sendMessage($userMessage);
