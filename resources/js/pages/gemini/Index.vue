@@ -14,6 +14,7 @@ const answer = ref('');
 const loading = ref(false);
 const conversationsHistory = ref(props.conversations);
 const selectedWindowId = ref<string | null>(null);
+const firstQuestion = ref(false);
 
 function askGemini() {
     loading.value = true;
@@ -21,7 +22,7 @@ function askGemini() {
 
     if (!sessionStorage.getItem('window_id')) {
         sessionStorage.setItem('window_id', crypto.randomUUID());
-        updateConversationsHistory();
+        firstQuestion.value = true;
     }
     const windowId = sessionStorage.getItem('window_id');
 
@@ -42,6 +43,10 @@ function askGemini() {
                 question.value = '';
             }
         });
+
+    if (firstQuestion.value) {
+        updateConversationsHistory(windowId);
+    }
 }
 
 function getThisSessionChatMessages() {
@@ -72,9 +77,10 @@ function selectConversation(windowId: string | null) {
     });
 }
 
-function updateConversationsHistory() {
+function updateConversationsHistory(windowId: string | null) {
     axios.get(route('conversations-history')).then((response) => {
         conversationsHistory.value = response.data.conversations;
+        selectedWindowId.value = windowId;
     });
 }
 

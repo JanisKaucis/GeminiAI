@@ -49,17 +49,7 @@ class GeminiController extends Controller
     {
         $windowId = $request->get('window_id');
 
-        $conversation = Conversation::with('messages')
-            ->where(['user_id' => auth()->id(), 'window_id' => $windowId])
-            ->first();
-
-        $messages = $conversation ? $conversation->messages()
-            ->latest()
-            ->take(100)
-            ->get()
-            ->sortBy('created_at')
-            ->values()
-            ->toArray() : [];
+        $messages = $this->service->getChatHistory($windowId);
 
         return response()->json([
             'messages' => $messages,

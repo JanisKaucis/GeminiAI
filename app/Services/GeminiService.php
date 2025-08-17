@@ -59,6 +59,21 @@ class GeminiService
         return $response->text();
     }
 
+    public function getChatHistory($windowId)
+    {
+        $conversation = Conversation::with('messages')
+            ->where(['user_id' => auth()->id(), 'window_id' => $windowId])
+            ->first();
+
+        return $conversation ? $conversation->messages()
+            ->latest()
+            ->take(100)
+            ->get()
+            ->sortBy('created_at')
+            ->values()
+            ->toArray() : [];
+    }
+
     public function getConversations()
     {
         return Conversation::where('user_id', auth()->id())->limit(10)->orderBy('created_at', 'desc')->get();
