@@ -34,7 +34,8 @@ npm run dev
 
 php artisan serve
 
-
+GeminiAI api key is:
+GEMINI_API_KEY=AIzaSyB0MKG33WmlbKk9e3PQafrR645EwfI8CYY
 
 ## What is this application:
 
