@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Gemini;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Gemini\DeleteConversationRequest;
 use App\Http\Requests\Gemini\GeminiRequest;
 use App\Models\conversation;
 use App\Services\GeminiService;
@@ -63,5 +64,12 @@ class GeminiController extends Controller
         return response()->json([
             'conversations' => $conversations
         ]);
+    }
+
+    public function deleteConversation(DeleteConversationRequest $request)
+    {
+        $validated = $request->validated();
+        $conversationId = $validated['conversation_id'];
+        Conversation::where(['user_id' => auth()->id(), 'id' => $conversationId])->delete();
     }
 }

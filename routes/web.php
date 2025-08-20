@@ -15,6 +15,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/ask-gemini', [GeminiController::class, 'getQuestion'])->name('ask-gemini')->middleware('throttle:20,1');
     Route::get('/chat-window-history', [GeminiController::class, 'getChatWindowHistory'])->name('chat-window-history');
     Route::get('conversations-history', [GeminiController::class, 'getConversationsHistory'])->name('conversations-history');
+    Route::delete('/delete-conversation', [GeminiController::class, 'deleteConversation'])->name('delete-conversation');
 });
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

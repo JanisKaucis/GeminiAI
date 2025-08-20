@@ -46,7 +46,8 @@ function askGemini() {
         });
 
     if (firstQuestion.value) {
-        updateConversationsHistory(windowId);
+        updateConversationsHistory();
+        selectedWindowId.value = windowId;
     }
 }
 
@@ -78,10 +79,9 @@ function selectConversation(windowId: string | null) {
     });
 }
 
-function updateConversationsHistory(windowId: string | null) {
+function updateConversationsHistory() {
     axios.get(route('conversations-history')).then((response) => {
         conversationsHistory.value = response.data.conversations;
-        selectedWindowId.value = windowId;
     });
 }
 
@@ -100,8 +100,13 @@ function closeMenu() {
     openMenuId.value = null;
 }
 
-function deleteConversation(conversationId: number) {
-    alert('Delete clicked: ' + conversationId);
+function deleteConversation(conversation: object) {
+    axios.delete(route('delete-conversation', { conversation_id: conversation.id })).then(() => {
+        updateConversationsHistory();
+        if (selectedWindowId.value === conversation.window_id) {
+            startNewConversation();
+        }
+    });
     openMenuId.value = null;
 }
 
@@ -152,7 +157,7 @@ onMounted(() => {
                                 @click.stop
                                 class="absolute right-0 z-50 mt-2 w-40 rounded-lg border border-gray-200 bg-white shadow-lg"
                             >
-                                <button @click="deleteConversation(conversation.id)" class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">
+                                <button @click="deleteConversation(conversation)" class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">
                                     Delete
                                 </button>
                             </div>
