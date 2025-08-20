@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Gemini;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Gemini\ChatHistoryRequest;
 use App\Http\Requests\Gemini\DeleteConversationRequest;
 use App\Http\Requests\Gemini\GeminiRequest;
 use App\Models\conversation;
@@ -46,9 +47,10 @@ class GeminiController extends Controller
         ]);
     }
 
-    public function getChatWindowHistory(Request $request): \Illuminate\Http\JsonResponse
+    public function getChatWindowHistory(ChatHistoryRequest $request): \Illuminate\Http\JsonResponse
     {
-        $windowId = $request->get('window_id');
+        $validated = $request->validated();
+        $windowId = $validated['window_id'];
 
         $messages = $this->service->getChatHistory($windowId);
 
