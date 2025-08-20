@@ -6,7 +6,7 @@ import { LogOut } from 'lucide-vue-next';
 import { defineProps, onMounted, ref } from 'vue';
 
 const props = defineProps({
-    conversations: Object,
+    conversations: Object
 });
 const question = ref('');
 const errors = ref({});
@@ -15,6 +15,7 @@ const loading = ref(false);
 const conversationsHistory = ref(props.conversations);
 const selectedWindowId = ref<string | null>(null);
 const firstQuestion = ref(false);
+const openMenuId = ref<number | null>(null);
 
 function askGemini() {
     loading.value = true;
@@ -90,6 +91,20 @@ function startNewConversation() {
     answer.value = '';
 }
 
+function toggleMenu(e: any, id: number) {
+    e.stopPropagation();
+    openMenuId.value = openMenuId.value === id ? null : id;
+}
+
+function closeMenu() {
+    openMenuId.value = null;
+}
+
+function deleteConversation(conversationId: number) {
+    alert('Delete clicked: ' + conversationId);
+    openMenuId.value = null;
+}
+
 onMounted(() => {
     getThisSessionChatMessages();
 });
@@ -99,23 +114,49 @@ onMounted(() => {
     <div class="grid grid-cols-4 bg-black">
         <div class="col-span-4 flex h-full rounded border bg-gray-200 p-4 text-black lg:col-span-1 lg:mx-4">
             <div class="w-full">
-                <button class="rounded border border-gray-500 bg-gray-300 p-1 hover:cursor-pointer" @click="startNewConversation()">
+                <button class="rounded border border-gray-500 bg-gray-300 px-1 hover:cursor-pointer" @click="startNewConversation()">
                     + New chat
                 </button>
-                <div class="text-lg font-bold my-4 border-b-2 pb-2">Chats</div>
+                <div class="my-4 border-b-2 pb-2 text-lg font-bold">Chats</div>
                 <div v-for="conversation in conversationsHistory" :key="conversation.id">
-                    <div class="my-1">
-                        <button
-                            :title="conversation.title"
-                            class="w-80 lg:w-40 truncate text-left hover:cursor-pointer hover:rounded hover:bg-gray-300"
-                            :class="{
-                                'rounded border border-gray-500 bg-gray-300': selectedWindowId === conversation.window_id,
-                            }"
-                            type="button"
-                            @click="selectConversation(conversation.window_id)"
-                        >
-                            {{ conversation.title }}
-                        </button>
+                    <div
+                        :title="conversation.title"
+                        @click="selectConversation(conversation.window_id)"
+                        class="flex w-full cursor-pointer items-center justify-between rounded-lg px-1 py-1 hover:bg-gray-100"
+                        :class="{ 'bg-gray-300': selectedWindowId === conversation.window_id }"
+                    >
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <span class="truncate text-sm text-gray-800">
+                                {{ conversation.title }}
+                            </span>
+                        </div>
+                        <div class="relative">
+                            <button @click="(e) => toggleMenu(e, conversation.id)" class="rounded-full p-1 hover:bg-gray-200">
+                                <span class="h-5 w-5 text-gray-500">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5 text-gray-600"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <circle cx="6" cy="12" r="1.5" />
+                                        <circle cx="12" cy="12" r="1.5" />
+                                        <circle cx="18" cy="12" r="1.5" />
+                                    </svg>
+                                </span>
+                            </button>
+                            <div
+                                v-if="openMenuId === conversation.id"
+                                @click.stop
+                                class="absolute right-0 z-50 mt-2 w-40 rounded-lg border border-gray-200 bg-white shadow-lg"
+                            >
+                                <button @click="deleteConversation(conversation.id)" class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -144,13 +185,18 @@ onMounted(() => {
                 </form>
             </div>
         </div>
-        <div class="col-span-4 lg:col-span-1 flex flex-col items-center">
+        <div class="col-span-4 flex flex-col items-center lg:col-span-1">
             <Link class="flex hover:cursor-pointer" method="post" :href="route('logout')" as="button">
-                    <LogOut class="mr-2 h-6 w-6" />
-                    Log out
+                <LogOut class="mr-2 h-6 w-6" />
+                Log out
             </Link>
         </div>
     </div>
+    <div
+        v-if="openMenuId !== null"
+        @click="closeMenu"
+        class="fixed inset-0"
+    ></div>
 </template>
 
 <style scoped></style>
