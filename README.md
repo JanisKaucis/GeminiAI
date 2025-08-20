@@ -49,7 +49,11 @@ Maintain multiple chat windows/conversations.
 
 Fetch conversation history.
 
+Delete conversation.
+
 The module is implemented using Laravel 12, Inertia.js, Vue 3, and Tailwind CSS.
+
+To use Gemini Ai, add GEMINI_API_KEY=your_api_key_value to your .env file
 
 ## API endpoint documentation:
 
