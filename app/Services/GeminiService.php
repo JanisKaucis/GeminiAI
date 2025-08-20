@@ -59,7 +59,7 @@ class GeminiService
         return $response->text();
     }
 
-    public function getChatHistory($windowId)
+    public function getChatHistory($windowId): array
     {
         $conversation = Conversation::with('messages')
             ->where(['user_id' => auth()->id(), 'window_id' => $windowId])
