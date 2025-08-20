@@ -8,7 +8,6 @@ use App\Http\Requests\Gemini\DeleteConversationRequest;
 use App\Http\Requests\Gemini\GeminiRequest;
 use App\Models\conversation;
 use App\Services\GeminiService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class GeminiController extends Controller
